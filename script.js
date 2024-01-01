@@ -3,87 +3,98 @@ const Gameboard = (function() {
   const add = (index, mark) => gameboard[index] = mark;
   const getBoard = () => gameboard;
   const reset = () => gameboard = new Array(9);
+  const availableCells = () => {
+    let available = [];
+    for (let index = 0 ; index < 9 ; index++) {
+      if (gameboard[index] === undefined) {
+        available.push(index);
+      }
+    }
+    return available;
+  };
 
   return {
     add,
     getBoard,
     reset,
+    availableCells,
   };
 })();
 
 function createPlayer(name, mark) {
-  return {name, mark};
+  let score = 0
+
+  const win = () => score++;
+  const getScore = () => score;
+  return {
+    name,
+    mark,
+    win,
+    getScore,
+  };
 }
 
 function playGame(player1, player2) {
-  let activePlayer;
-  Gameboard.reset();
-  
-  do {
-    activePlayer = switchPlayer(activePlayer, player1, player2);
+  let activePlayer
+
+  const switchPlayer = () => activePlayer = activePlayer === player1 ? player2 : player1;
+  const getActivePlayer = () => activePlayer;
+
+  const playRound = () => {
     const input = prompt(`${activePlayer.name} turn!`);
-    playerChoice(activePlayer, parseInt(input));
-  } 
-  while (gameOver(Gameboard.getBoard(), activePlayer) !== true);
-
-  console.log('Game over!');
-}
-
-function playerChoice(player, value) {
-  let boardState = Gameboard.getBoard()
-  console.log(boardState);
-  if (Gameboard.getBoard()[value] === undefined) {
-    Gameboard.add(value, player.mark);
-    console.log(Gameboard.getBoard());
+    if (Gameboard.availableCells().includes(parseInt(input))) {
+      Gameboard.add(parseInt(input), activePlayer.mark);
+    } else playRound();
   }
-}
 
-function gameOver(board, activePlayer) {
-  const rows = [
-    [board[0], board[1], board[2]],
-    [board[3], board[4], board[5]],
-    [board[6], board[7], board[8]],
-    [board[0], board[3], board[6]],
-    [board[1], board[4], board[7]],
-    [board[2], board[5], board[8]],
-    [board[0], board[4], board[8]],
-    [board[2], board[4], board[6]]
-  ]
+  const gameOver = () => {
+    const board = Gameboard.getBoard();
+    // List of winning combinations
+    const rows = [
+      [board[0], board[1], board[2]],
+      [board[3], board[4], board[5]],
+      [board[6], board[7], board[8]],
+      [board[0], board[3], board[6]],
+      [board[1], board[4], board[7]],
+      [board[2], board[5], board[8]],
+      [board[0], board[4], board[8]],
+      [board[2], board[4], board[6]]
+    ];
 
-  let result = false;
-
-  for (const row of rows) {
-    if (checkRow(row, activePlayer)) {
-      console.log(`${activePlayer.name} wins!`);
-      result = true;
-      break;
+    for (const row of rows) {
+      if (
+        row[0] === activePlayer.mark &&
+        row[1] === activePlayer.mark &&
+        row[2] === activePlayer.mark
+      ) {
+        activePlayer.win();
+        console.log(`${activePlayer.name} wins!`);
+        return true;
+      }
     }
+
+    if (Gameboard.availableCells().length === 0) {
+      console.log("It's a draw!");
+      return true
+    }
+
+    return false
   }
 
-  if (!(board.includes(undefined))) {
-    console.log("It's a draw!");
-    result = true;
-  }
+  //execute the game
+  Gameboard.reset();
 
-  return result;
-}
-
-function switchPlayer(player, player1, player2) {
-  if (player === player1) {
-    player = player2;
-  } else {
-    player = player1;
-  }
-  return player;
-}
-
-
-function checkRow(row, activePlayer) {
-  if (row[0] === activePlayer.mark &&
-      row[1] === activePlayer.mark &&
-      row[2] === activePlayer.mark) {
-    return true;
-  } else return false;
+  do {
+    switchPlayer();
+    playRound();
+  } while (gameOver() === false);
+  
+  return {
+    getActivePlayer,
+    switchPlayer,
+    playRound,
+    gameOver,
+  };
 }
 
 darknab = createPlayer('Darknab', 'x');
