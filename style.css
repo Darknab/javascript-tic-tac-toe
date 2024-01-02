@@ -1,0 +1,136 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+:root {
+  --bg-primary: #e7e5e4;
+  --bg-secondary: #292524;
+  --text-color-primary:#292524;
+  --text-color-secondary:#e7e5e4;
+  --text-color-red: #dc2626;
+  --light-grey: #d6d3d1;
+
+  --border-cell: 5px solid var(--text-color-primary);
+
+  --text-primary: system-ui, sans-serif;
+  --text-heading: ui-rounded, 'Hiragino Maru Gothic ProN', Quicksand, Comfortaa, Manjari, 'Arial Rounded MT', 'Arial Rounded MT Bold', Calibri, source-sans-pro, sans-serif;
+  --text-marks: 'Segoe Print', 'Bradley Hand', Chilanka, TSCu_Comic, casual, cursive;
+
+}
+
+body {
+  background-color: var(--bg-primary);
+  font-family: var(--text-primary);
+}
+
+h1,
+h2 {
+  font-family: var(--text-heading);
+}
+
+h1 {
+  text-align: center;
+}
+
+main {
+  max-width: 1600px;
+  padding: 3em;
+  text-align: center;
+  
+
+  & .player-box {
+    display: inline-block;
+    max-width: max-content;
+    text-align: center;
+
+    & p {
+      color: var(--text-color-red);
+    }
+
+  }
+
+  & #player-1 {
+    margin-inline-end: 60%;
+  }
+}
+
+
+#speaker {
+  font-size: 3em;
+  font-weight: bold;
+  color: var(--text-color-red);
+}
+
+#board {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  max-width: 400px;
+  margin: 3em auto;
+
+  & .cell {
+    aspect-ratio: 1 / 1;
+    transition: 200ms ease-in-out;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 3em;
+    font-weight: bold;
+    font-family: var(--text-marks);
+
+    &:hover {
+      background-color: #d6d3d1;
+    }
+  }
+}
+
+#cell-0 {
+  border-right: var(--border-cell);
+  border-bottom: var(--border-cell);
+}
+
+#cell-1 {
+  border-left: var(--border-cell);
+  border-right: var(--border-cell);
+  border-bottom: var(--border-cell);
+}
+
+#cell-2 {
+  border-left: var(--border-cell);
+  border-bottom: var(--border-cell);
+}
+
+#cell-3 {
+  border-right: var(--border-cell);
+  border-top: var(--border-cell);
+  border-bottom: var(--border-cell);
+}
+
+#cell-4 {
+  border: var(--border-cell);
+}
+
+#cell-5 {
+  border-top: var(--border-cell);
+  border-left: var(--border-cell);
+  border-bottom: var(--border-cell);
+}
+
+#cell-6 {
+  border-top: var(--border-cell);
+  border-right: var(--border-cell);
+}
+
+#cell-7 {
+  border-top: var(--border-cell);
+  border-left: var(--border-cell);
+  border-right: var(--border-cell);
+}
+
+#cell-8 {
+  border-left: var(--border-cell);
+  border-top: var(--border-cell);
+}
+
+
