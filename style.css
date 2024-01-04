@@ -39,7 +39,6 @@ main {
   padding: 3em;
   text-align: center;
   
-
   & .player-box {
     display: inline-block;
     max-width: max-content;
@@ -55,7 +54,6 @@ main {
     margin-inline-end: 60%;
   }
 }
-
 
 #speaker {
   font-size: 3em;
@@ -131,6 +129,58 @@ main {
 #cell-8 {
   border-left: var(--border-cell);
   border-top: var(--border-cell);
+}
+
+dialog {
+  position: relative;
+  padding: 2em;
+  background-color: #fef3c7;
+  box-shadow: 5px 5px 30px var(--bg-secondary);
+
+
+  & h3 {
+    color: var(--text-primary);
+    font-size: 2.5em;
+  }
+
+  & button {
+    position: absolute;
+    bottom: 90%;
+    left: 90%;
+    background-color: transparent;
+    border: none;
+
+    &:hover {
+      scale: 1.4;
+    }
+  }
+
+  & p {
+    text-align: start;
+    color: var(--text-color-primary);
+  }
+
+  & input {
+    width: 100%;
+    padding: 1em;
+    border: 1px dotted var(--bg-secondary);
+    border-radius: 1em;
+    text-align: center;
+    font-family: var(--text-marks);
+    color: var(--text-color-primary);
+  }
+
+  & .submit {
+    width:max-content;
+    margin-top: 2em;
+    padding: 1em 2em;
+    transition: color 200ms ease-in-out;
+  }
+
+  & .submit:hover {
+    background-color: var(--bg-secondary);
+    color: var(--text-color-secondary);
+  }
 }
 
 
