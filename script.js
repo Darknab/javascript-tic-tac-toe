@@ -1,3 +1,4 @@
+// Game logic
 const Gameboard = (function() {
   let gameboard = new Array(9);
   const add = (index, mark) => gameboard[index] = mark;
@@ -97,7 +98,16 @@ function playGame(player1, player2) {
   };
 }
 
-darknab = createPlayer('Darknab', 'x');
-tema = createPlayer('Tema', 'o');
+// DOM logic
+
+const modal = document.querySelector('dialog');
+const closeBtn = document.querySelector('dialog button');
+
+addEventListener('load', () => {
+  modal.showModal();
+})
 
 
+closeBtn.addEventListener('click', () => {
+  modal.close();
+})
