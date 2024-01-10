@@ -42,12 +42,13 @@ function gameController () {
   const player1 = createPlayer(players.player1Name, "x");
   const player2 = createPlayer(players.player2Name, "o");
 
+  const getPlayer1 = () => player1;
+  const getPlayer2 = () => player2;
 
   const switchPlayer = (player1, player2) => activePlayer = activePlayer === player1 ? player2 : player1;
   const getActivePlayer = ()=> activePlayer;
   const launchGame = () => {
     Gameboard.reset();
-  
     DisplayController.displayPlayersNames();
     DisplayController.displayScores(player1, player2);
     switchPlayer(player1, player2);
@@ -90,8 +91,8 @@ function gameController () {
   }
 
   return {
-    player1, 
-    player2,
+    getPlayer1,
+    getPlayer2,
     switchPlayer,
     getActivePlayer,
     launchGame,
@@ -168,7 +169,7 @@ const EventsHandler = (function() {
   function handleCellClick(e) {
     const cellId = e.target.id;
     const cellIndex = parseInt(cellId.slice(-1));
-
+  
     let activePlayer = game.getActivePlayer();
 
     if (Gameboard.availableCells().includes(cellIndex)) {
@@ -176,12 +177,12 @@ const EventsHandler = (function() {
       DisplayController.displayMark(activePlayer.mark, cellIndex);
 
       if (game.gameOver()) {
-        DisplayController.displayScores(game.player1, game.player2);
+        DisplayController.displayScores(game.getPlayer1(), game.getPlayer2());
         cells.forEach(cell => {
           cell.removeEventListener('click', handleCellClick);
         });
       } else {
-        game.switchPlayer(game.player1, game.player2);
+        game.switchPlayer(game.getPlayer1(), game.getPlayer2());
         activePlayer = game.getActivePlayer();
         DisplayController.displayTurn(activePlayer);
       }
