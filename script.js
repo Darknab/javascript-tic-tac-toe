@@ -35,7 +35,54 @@ function createPlayer(name, mark) {
   }
 }
 
-function gameController () {
+const EventsHandler = (function() {
+
+  const getPlayersNames = () => {
+    const player1Input = document.querySelector('#player-1-name').value;
+    const player2Input = document.querySelector('#player-2-name').value;
+    const player1Name = player1Input === "" ? "Player 1" : player1Input;
+    const player2Name = player2Input === "" ? "Player 2" : player2Input;
+
+    return {player1Name, player2Name};
+  };
+
+  const handleBoard = () => {
+    cells = document.querySelectorAll('.cell');
+    cells.forEach( cell => {
+      cell.addEventListener('click', handleCellClick)
+    });
+  };
+
+  function handleCellClick(e) {
+    const cellId = e.target.id;
+    const cellIndex = parseInt(cellId.slice(-1));
+  
+    let activePlayer = GameController.getActivePlayer();
+
+    if (Gameboard.availableCells().includes(cellIndex)) {
+      Gameboard.add(cellIndex, activePlayer.mark);
+      DisplayController.displayMark(activePlayer.mark, cellIndex);
+
+      if (GameController.gameOver()) {
+        DisplayController.displayScores(GameController.getPlayer1(), GameController.getPlayer2());
+        DisplayController.toggleBtn();
+        cells.forEach(cell => {
+          cell.removeEventListener('click', handleCellClick);
+        });
+      } else {
+        GameController.switchPlayer(GameController.getPlayer1(), GameController.getPlayer2());
+        activePlayer = GameController.getActivePlayer();
+        DisplayController.displayTurn(activePlayer);
+      }
+    }
+  }
+
+  return {
+    getPlayersNames,
+    handleBoard,
+  }
+})();
+const GameController = (function() {
   let activePlayer;
 
   const players = EventsHandler.getPlayersNames();
@@ -45,16 +92,22 @@ function gameController () {
   const getPlayer1 = () => player1;
   const getPlayer2 = () => player2;
 
+  const updateNames = () => {
+    const players = EventsHandler.getPlayersNames();
+    player1.name = players.player1Name;
+    player2.name = players.player2Name;
+  }
+
   const switchPlayer = (player1, player2) => activePlayer = activePlayer === player1 ? player2 : player1;
-  const getActivePlayer = ()=> activePlayer;
+  const getActivePlayer = () => activePlayer;
   const launchGame = () => {
     Gameboard.reset();
     DisplayController.displayPlayersNames();
     DisplayController.displayScores(player1, player2);
     switchPlayer(player1, player2);
+    let activePlayer = GameController.getActivePlayer();
     DisplayController.displayTurn(activePlayer);
-    EventsHandler.handleBoard();
-    
+    EventsHandler.handleBoard();  
   }
 
   const gameOver = () => {
@@ -97,9 +150,9 @@ function gameController () {
     getActivePlayer,
     launchGame,
     gameOver,
+    updateNames,
   };
-};
-
+})();
 
 const DisplayController = (function() {
   const modal = document.querySelector('dialog');
@@ -138,66 +191,33 @@ const DisplayController = (function() {
     } else speaker.innerText = "It's a draw!";
   }
 
+  const toggleBtn = () => {
+    const btn = document.querySelector('.play-again');
+    btn.classList.toggle('inactive');
+  }
+
+  const cleanCells = () => {
+    const cells = document.querySelectorAll('.cell');
+    cells.forEach(cell => {
+      cell.innerText = "";
+    })  
+  }
+
   return {
     displayMark,
     displayTurn,
     displayPlayersNames,
     displayScores,
     displayResult,
+    toggleBtn,
+    cleanCells,
   };
-
-})();
-
-const EventsHandler = (function() {
-
-  const getPlayersNames = () => {
-    const player1Input = document.querySelector('#player-1-name').value;
-    const player2Input = document.querySelector('#player-2-name').value;
-    const player1Name = player1Input === "" ? "Player 1" : player1Input;
-    const player2Name = player2Input === "" ? "Player 2" : player2Input;
-
-    return {player1Name, player2Name};
-  };
-
-  const handleBoard = () => {
-    cells = document.querySelectorAll('.cell');
-    cells.forEach( cell => {
-      cell.addEventListener('click', handleCellClick)
-    });
-  };
-
-  function handleCellClick(e) {
-    const cellId = e.target.id;
-    const cellIndex = parseInt(cellId.slice(-1));
-  
-    let activePlayer = game.getActivePlayer();
-
-    if (Gameboard.availableCells().includes(cellIndex)) {
-      Gameboard.add(cellIndex, activePlayer.mark);
-      DisplayController.displayMark(activePlayer.mark, cellIndex);
-
-      if (game.gameOver()) {
-        DisplayController.displayScores(game.getPlayer1(), game.getPlayer2());
-        cells.forEach(cell => {
-          cell.removeEventListener('click', handleCellClick);
-        });
-      } else {
-        game.switchPlayer(game.getPlayer1(), game.getPlayer2());
-        activePlayer = game.getActivePlayer();
-        DisplayController.displayTurn(activePlayer);
-      }
-    }
-  }
-
-  return {
-    getPlayersNames,
-    handleBoard,
-  }
 })();
 
 const modal = document.querySelector('dialog');
 const closeBtn = document.querySelector('dialog button');
 const submitBtn = document.querySelector('.submit');
+const btn = document.querySelector('.play-again');
 
 addEventListener('load', () => modal.showModal());
 
@@ -206,6 +226,12 @@ closeBtn.addEventListener('click', modal.close());
 submitBtn.addEventListener('click', (e) => {
   e.preventDefault();
   modal.close()
-  game = gameController();
-  game.launchGame();
+  GameController.updateNames();
+  GameController.launchGame();
+})
+
+btn.addEventListener('click', () => {
+  DisplayController.toggleBtn();
+  DisplayController.cleanCells();
+  GameController.launchGame();
 })
